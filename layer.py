@@ -69,17 +69,21 @@ class ActivationLayer(Layer):
   def backward_propagation(self, output):
     return output * self.activation(self.input, derivative=True)
   
-class ActivationLayer(Layer):
-  """A layer that applies a non-linear transformation to the input."""
+class Dense(Layer):
+  """A layer that combines linear and non-linear transformation of its input."""
   
-  def __init__(self, activation_name=None):
-    self.activation = Activation(activation_name)
-
+  def __init__(self, units, activation, initializer='random_normal'):
+    self.linearLayer = LinearLayer(units, initializer)
+    self.activationLayer = ActivationLayer(activation)
+    
   def forward_propagation(self, input):
     self.input = input
-    self.output = self.activation(input)
+    self.output = self.linearLayer.forward_propagation(input)
+    self.output = self.activationLayer.forward_propagation(self.output)
     return self.output
 
-  def backward_propagation(self, output):
-    return output * self.activation(self.input, derivative=True)
+  def backward_propagation(self, output, learning_rate=0.01):
+    self.output = self.activationLayer.backward_propagation(output)
+    self.output = self.linearLayer.backward_propagation(self.output, learning_rate)
+    return self.output
   
