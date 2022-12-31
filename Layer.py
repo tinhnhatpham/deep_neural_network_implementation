@@ -1,5 +1,5 @@
-from initalizer import *
-from activation import *
+from Initializer import *
+from Activation import *
 
 
 class Layer:
